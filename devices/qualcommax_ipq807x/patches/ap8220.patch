@@ -1,30 +1,13 @@
 --- a/package/boot/uboot-envtools/files/qualcommax_ipq807x
 +++ b/package/boot/uboot-envtools/files/qualcommax_ipq807x
-@@ -26,6 +26,12 @@ ubootenv_add_mmc() {
- }
- 
- case "$board" in
+@@ -17,6 +17,7 @@ netgear,wax630)
+ 	[ -n "$idx" ] && \
+ 		ubootenv_add_uci_config "/dev/mtd$idx" "0x0" "0x40000" "0x20000" "2"
+ 	;;
 +aliyun,ap8220|\
-+compex,wpq873|\
-+edgecore,eap102|\
-+zyxel,nbg7815)
-+	ubootenv_add_mtd "0:appsblenv" "0x0" "0x10000" "0x10000"
-+	;;
- dynalink,dl-wrx36|\
- netgear,rax120v2|\
- netgear,sxr80|\
-@@ -37,11 +43,6 @@ tplink,eap620hd-v1|\
- tplink,eap660hd-v1)
- 	ubootenv_add_mtd "0:appsblenv" "0x0" "0x40000" "0x20000"
- 	;;
--compex,wpq873|\
--edgecore,eap102|\
--zyxel,nbg7815)
--	ubootenv_add_mtd "0:appsblenv" "0x0" "0x10000" "0x10000"
--	;;
- edimax,cax1800)
- 	ubootenv_add_mtd "0:appsblenv" "0x0" "0x10000" "0x20000"
- 	;;
+ compex,wpq873|\
+ edgecore,eap102|\
+ zyxel,nbg7815)
 
 --- a/package/firmware/ipq-wifi/Makefile
 +++ b/package/firmware/ipq-wifi/Makefile
@@ -70,43 +53,26 @@
 
 --- a/target/linux/qualcommax/ipq807x/base-files/etc/board.d/02_network
 +++ b/target/linux/qualcommax/ipq807x/base-files/etc/board.d/02_network
-@@ -11,6 +11,12 @@ ipq807x_setup_interfaces()
- 	local board="$1"
- 
- 	case "$board" in
-+	aliyun,ap8220|\
-+	edgecore,eap102|\
-+	yuncore,ax880|\
-+	zte,mf269)
-+		ucidef_set_interfaces_lan_wan "lan" "wan"
-+		;;
- 	asus,rt-ax89x)
- 		ucidef_set_interfaces_lan_wan "10g-sfp 10g-copper lan1 lan2 lan3 lan4 lan5 lan6 lan7 lan8" "wan"
- 		;;
-@@ -37,11 +43,6 @@ ipq807x_setup_interfaces()
+@@ -36,6 +36,7 @@ ipq807x_setup_interfaces()
  	xiaomi,ax3600)
  		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3" "wan"
  		;;
--	edgecore,eap102|\
--	yuncore,ax880|\
--	zte,mf269)
--		ucidef_set_interfaces_lan_wan "lan" "wan"
--		;;
- 	edimax,cax1800)
- 		ucidef_set_interfaces_lan_wan "lan"
- 		;;
-@@ -83,6 +84,11 @@ ipq807x_setup_macs()
++	aliyun,ap8220|\
+ 	edgecore,eap102|\
+ 	yuncore,ax880|\
+ 	zte,mf269)
+@@ -81,6 +82,11 @@ ipq807x_setup_macs()
  	local label_mac=""
  
  	case "$board" in
-+	aliyun,ap8220)
-+		wan_mac=$(mtd_get_mac_text product_info 0x4b)
-+		lan_mac=$(macaddr_add "$wan_mac" 1)
-+		label_mac="$wan_mac"
++		aliyun,ap8220)
++			wan_mac=$(mtd_get_mac_text product_info 0x4b)
++			lan_mac=$(macaddr_add "$wan_mac" 1)
++			label_mac="$wan_mac"
 +		;;
- 	linksys,mx4200v2|\
- 	linksys,mx4300)
- 		label_mac=$(mtd_get_mac_ascii devinfo hw_mac_addr)
+ 		linksys,mx4200v2|\
+ 		linksys,mx4300)
+ 			label_mac=$(mtd_get_mac_ascii devinfo hw_mac_addr)
 
 --- a/target/linux/qualcommax/ipq807x/base-files/etc/hotplug.d/firmware/11-ath11k-caldata
 +++ b/target/linux/qualcommax/ipq807x/base-files/etc/hotplug.d/firmware/11-ath11k-caldata
